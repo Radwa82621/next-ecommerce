@@ -1,11 +1,17 @@
 "use server";
 import getMyToken from "@/utilities/getMyToken";
+import { headers } from "next/headers";
 
 export async function onlinePayment(data: any, cartId: string) {
   const token = await getMyToken();
+  const headersList = await headers();
+  const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
+  const host = headersList.get("host") || "localhost:3000";
+  const baseUrl = `${protocol}://${host}`;
+
   if (token) {
     let res = await fetch(
-      `https://ecommerce.routemisr.com/api/v1/orders/checkout-session/${cartId}?url=http://localhost:3000`,
+      `https://ecommerce.routemisr.com/api/v1/orders/checkout-session/${cartId}?url=${baseUrl}`,
       {
         method: "POST",
         headers: {
